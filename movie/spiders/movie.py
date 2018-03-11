@@ -5,20 +5,25 @@ from movie.items import MovieItem
 class movie(scrapy.Spider):
     index = 'https://777av.vip'
     name = 'movie'
-    #allowed_domains = [index]
     start_urls = ['https://777av.vip/']
     page = 15000
-    # rules = (
-    #     Rule(LinkExtractor(allow=('https://777av.vip/vod/\d{1,5}.html')),
-    #          callback='parse_item', follow=True),
-    # )
+
     def start_requests(self):
+        '''
+        构造电影URL提交给Request,回调给parse_item
+        :return:
+        '''
         for i in range(1, self.page):
             url = 'https://777av.vip/vod/' + str(i) + '.html'
             yield Request(url, callback=self.parse_item)
 
 
     def parse_item(self,response):
+        '''
+        获取电影下载链接并下载预览图提交给piplines.py
+        :param response:
+        :return:
+        '''
         item = MovieItem()
         name = response.xpath('//div[@id="main"]//div[@class="info"]/h1/text()').extract_first()
         type = response.xpath('//div[@id="main"]//div[@class="info"]/ul/li[1]/a/@title').extract_first()
